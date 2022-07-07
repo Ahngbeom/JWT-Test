@@ -25,7 +25,7 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeRequests((authz) -> authz
-			.antMatchers("/", "/error", "/webjars/**").permitAll()
+			.antMatchers("/", "/error", "/webjars/**", "/h2-console").permitAll()
 			.anyRequest().authenticated()
 		)
 			.exceptionHandling((e) -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
