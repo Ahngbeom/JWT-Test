@@ -16,13 +16,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "USERS")
 public class User {
-	
+
+	// 기본키 생성
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(nullable = false)
-	private String ninkname;
+	private String nickname;
 
 	@Column(nullable = false)
 	private String email;
@@ -32,7 +33,7 @@ public class User {
 
 	@Builder
 	public User(String nickname, String email, String picture) {
-		this.ninkname = nickname;
+		this.nickname = nickname;
 		this.email = email;
 		this.picture = picture;
 	}
@@ -42,8 +43,8 @@ public class User {
 		return id;
 	}
 
-	public String getNinkname() {
-		return ninkname;
+	public String getNickname() {
+		return nickname;
 	}
 
 	public String getEmail() {
@@ -54,8 +55,8 @@ public class User {
 		return picture;
 	}
 
-	public void setNinkname(String ninkname) {
-		this.ninkname = ninkname;
+	public void setNickname(String ninkname) {
+		this.nickname = ninkname;
 	}
 
 	public void setEmail(String email) {
