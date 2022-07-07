@@ -1,4 +1,4 @@
-package com.ahng.myspringoauth2maven.dto;
+package com.ahng.myspringoauth2maven.Entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,4 +36,34 @@ public class User {
 		this.email = email;
 		this.picture = picture;
 	}
+	
+	
+	public Long getId() {
+		return id;
+	}
+
+	public String getNinkname() {
+		return ninkname;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+	
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setNinkname(String ninkname) {
+		this.ninkname = ninkname;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
+
 }
