@@ -1,5 +1,6 @@
 package com.ahng.myspringoauth2maven;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.ahng.myspringoauth2maven.DTO.User;
@@ -47,6 +48,20 @@ public class MySpringOauth2MavenApplication {
 		log.warn(user.getPicture());
 		service.setUser(user);
 		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+
+	@PostMapping("/h2/user/register/json")
+	public ResponseEntity<?> userRegistrationJSON(@RequestBody HashMap<String, Object> user) {
+		log.warn(user.get("nickname"));
+		log.warn(user.get("email"));
+		log.warn(user.get("picture"));
+		UserEntity userEntity = UserEntity.builder()
+				.nickname((String) user.get("nickname"))
+				.email((String) user.get("email"))
+				.picture((String) user.get("picture"))
+				.build();
+		service.setUser(userEntity);
+		return new ResponseEntity<>(userEntity, HttpStatus.OK);
 	}
 
 	public static void main(String[] args) {

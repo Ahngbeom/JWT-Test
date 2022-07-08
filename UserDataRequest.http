@@ -23,7 +23,7 @@ nickname=a&email=b&picture=
 
 ###
 
-POST http://localhost:8080/h2/user/register
+POST http://localhost:8080/h2/user/register/json
 Content-Type: application/json
 
 {

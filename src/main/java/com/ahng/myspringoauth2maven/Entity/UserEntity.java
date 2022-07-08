@@ -22,13 +22,13 @@ public class UserEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, name = "nickname")
 	private String nickname;
 
-	@Column(nullable = false)
+	@Column(nullable = false, name = "email")
 	private String email;
 
-	@Column
+	@Column(name = "picture")
 	private String picture;
 
 	@Builder
