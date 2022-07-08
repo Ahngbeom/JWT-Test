@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "USERS")
-public class User {
+public class UserEntity {
 
 	// 기본키 생성
 	@Id
@@ -32,31 +32,14 @@ public class User {
 	private String picture;
 
 	@Builder
-	public User(String nickname, String email, String picture) {
+	public UserEntity(String nickname, String email, String picture) {
 		this.nickname = nickname;
 		this.email = email;
 		this.picture = picture;
 	}
-	
-	
-	public Long getId() {
-		return id;
-	}
 
-	public String getNickname() {
-		return nickname;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-	
-	public String getPicture() {
-		return picture;
-	}
-
-	public void setNickname(String ninkname) {
-		this.nickname = ninkname;
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public void setEmail(String email) {

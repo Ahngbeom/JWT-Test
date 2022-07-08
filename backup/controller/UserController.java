@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ahng.myspringoauth2maven.dto.User;
+import com.ahng.myspringoauth2maven.DTO.User;
 import com.ahng.myspringoauth2maven.service.UserService;
 
 import lombok.RequiredArgsConstructor;

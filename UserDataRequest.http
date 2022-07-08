@@ -1,0 +1,35 @@
+### User List
+GET http://localhost:8080/h2/user/list
+
+### User Registration
+POST http://localhost:8080/h2/user/register
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="nickname"
+
+admin
+--WebAppBoundary--
+Content-Disposition: form-data; name="email"
+
+admin@gmail.com
+
+###
+
+POST http://localhost:8080/h2/user/register
+Content-Type: application/x-www-form-urlencoded
+
+nickname=a&email=b&picture=
+
+###
+
+POST http://localhost:8080/h2/user/register
+Content-Type: application/json
+
+{
+  "nickname": "admin",
+  "email": "admin@gmail.com",
+  "picture": null
+}
+
+###

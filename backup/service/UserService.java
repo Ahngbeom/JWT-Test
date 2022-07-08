@@ -2,7 +2,7 @@ package com.ahng.myspringoauth2maven.service;
 
 import org.springframework.stereotype.Service;
 
-import com.ahng.myspringoauth2maven.dto.User;
+import com.ahng.myspringoauth2maven.DTO.User;
 import com.ahng.myspringoauth2maven.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
