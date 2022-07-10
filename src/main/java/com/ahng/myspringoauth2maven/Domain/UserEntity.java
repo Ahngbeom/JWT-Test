@@ -1,4 +1,4 @@
-package com.ahng.myspringoauth2maven.Entity;
+package com.ahng.myspringoauth2maven.Domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

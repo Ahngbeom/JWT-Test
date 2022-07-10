@@ -18,6 +18,17 @@ public class User {
         this.picture = picture;
     }
 
+    public User(Long id, String nickname, String email, String picture) {
+        this.id = id;
+        this.nickname = nickname;
+        this.email = email;
+        this.picture = picture;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }

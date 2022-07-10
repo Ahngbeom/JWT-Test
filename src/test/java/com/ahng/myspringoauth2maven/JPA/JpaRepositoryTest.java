@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
-import com.ahng.myspringoauth2maven.Entity.UserEntity;
-import com.ahng.myspringoauth2maven.JpaRepository.UserRepository;
+import com.ahng.myspringoauth2maven.Domain.UserEntity;
+import com.ahng.myspringoauth2maven.DAO.UserRepository;
 
 @SpringBootTest // SpringBootTest에서 ExtendWith(SpringExtension.class) 메타 어노테이션을 이미 사용하고 있음
 @Rollback(false)

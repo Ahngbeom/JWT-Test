@@ -1,11 +1,12 @@
 package com.ahng.myspringoauth2maven.Service;
 
-import com.ahng.myspringoauth2maven.Entity.UserEntity;
+import com.ahng.myspringoauth2maven.DTO.User;
+import com.ahng.myspringoauth2maven.Domain.UserEntity;
 
 import java.util.List;
 
 public interface UserService {
-    List<UserEntity> getUserList();
+    List<User> getUserList();
 
-    boolean setUser(UserEntity user);
+    UserEntity setUser(User user);
 }
