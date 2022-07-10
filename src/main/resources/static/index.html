@@ -33,7 +33,6 @@
     <div class="container">
         <a href="/h2/user/list">User List</a>
     </div>
-
     <script type="text/javascript" src="/webjars/js-cookie/3.0.1/dist/js.cookie.js"></script>
     <script type="text/javascript">
         $.ajaxSetup({
@@ -42,9 +41,7 @@
                         || settings.type === 'DELETE') {
                         if (!(/^http:.*/.test(settings.url) || /^https:.*/
                             .test(settings.url))) {
-                            // Only send the token to relative URLs i.e. locally.
-                            xhr.setRequestHeader("X-XSRF-TOKEN",
-                                Cookies.get('XSRF-TOKEN'));
+                            xhr.setRequestHeader("X-XSRF-TOKEN", Cookies.get('XSRF-TOKEN'));
                         }
                     }
                 }
@@ -54,14 +51,14 @@
             $(".unauthenticated").hide();
             $(".authenticated").show();
         });
-        var logout = function () {
+        const logout = function () {
             $.post("/logout", function () {
                 $("#user").html('');
                 $(".unauthenticated").show();
                 $(".authenticated").hide();
             })
             return true;
-        }
+        };
     </script>
 </body>
 
