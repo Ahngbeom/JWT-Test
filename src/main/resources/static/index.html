@@ -25,6 +25,7 @@
     </div>
     <div class="container authenticated" style="display:none">
         Logged in as: <span id="user"></span>
+        <img id="avatar" src="" alt="">
         <div>
             <button onClick="logout()" class="btn btn-primary">Logout</button>
         </div>
@@ -46,8 +47,19 @@
                     }
                 }
             });
+        // $.get("/user", function (data) {
+        //     $("#user").html(data.name);
+        //     $(".unauthenticated").hide();
+        //     $(".authenticated").show();
+        // });
         $.get("/user", function (data) {
-            $("#user").html(data.name);
+            if (data === null || data === "") {
+                console.log("Not Logged in");
+                return;
+            }
+            console.log(data);
+            $("#user").html(data.nickname);
+            $("#avatar").attr("src", data.picture);
             $(".unauthenticated").hide();
             $(".authenticated").show();
         });
