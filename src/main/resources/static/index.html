@@ -23,6 +23,10 @@
     <div class="container unauthenticated">
         With Google: <a href="/oauth2/authorization/google">click here</a>
     </div>
+    <div class="container unauthenticated">
+        With Kakao: <a href="/oauth2/authorization/kakao">click here</a>
+<!--        With Kakao: <button onclick="KakaoLogin()" class="d-inline page-link">click here</button>-->
+    </div>
     <div class="container authenticated" style="display:none">
         Logged in as: <span id="user"></span>
         <img id="avatar" src="" alt="">
@@ -63,6 +67,48 @@
             $(".unauthenticated").hide();
             $(".authenticated").show();
         });
+
+        const KakaoLogin = function () {
+            // const xhr = new XMLHttpRequest();
+            // const url = 'http://localhost:8080/oauth2/authorization/kakao';
+            //
+            // if (xhr) {
+            //     xhr.open('GET', url, true);
+            //     xhr.withCredentials = true;
+            //     xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+            //     if(xhr.readyState === XMLHttpRequest.DONE) {
+            //         const status = xhr.status;
+            //         console.log(status);
+            //         if (status === 0 || (status >= 200 && status < 400)) {
+            //             // The request has been completed successfully
+            //             console.log(xhr.responseText);
+            //         } else {
+            //             // Oh no! There has been an error with the request!
+            //         }
+            //     }
+            //     xhr.send();
+            // }
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8080/oauth2/authorization/kakao',
+                crossDomain: true,
+                dataType: "jsonp",
+                format: "json",
+                error: function (data) {
+                    if (data === null || data === "") {
+                        console.log("Not Logged in");
+                    }
+                },
+                success: function (data) {
+                    console.log(data);
+                    // $("#user").html(data.nickname);
+                    // $("#avatar").attr("src", data.picture);
+                    // $(".unauthenticated").hide();
+                    // $(".authenticated").show();
+                }
+            });
+        }
+
         const logout = function () {
             $.post("/logout", function () {
                 $("#user").html('');

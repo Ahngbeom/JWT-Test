@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
+//@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 

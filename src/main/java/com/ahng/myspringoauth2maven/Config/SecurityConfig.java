@@ -15,15 +15,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests((auth) -> auth
-                        .antMatchers("/", "/error", "/webjars/**", "/h2-console/**", "/h2/**", "/user/**").permitAll()
+                        .antMatchers("/", "/error", "/webjars/**", "/h2-console/**", "/h2/**", "/user/**", "/oauth/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated() // 어떠한 요청이든 권한이 필요하게된다.
                 )
                 .exceptionHandling((e) -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .csrf().disable()
+                .csrf().disable() // csrf 비활성화
 //                .csrf((c) -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).ignoringAntMatchers("/h2-console/**", "/h2/**"))
 //                .headers().frameOptions().sameOrigin()
 //                .and()
-                .logout((l) -> l.logoutSuccessUrl("/").permitAll())
+                .logout((l) -> l.logoutSuccessUrl("/").permitAll()) // Logout 성공 후 Redirection URL 지정 및 해당 URL 모두에게 접근 허용
                 .oauth2Login();
         return http.build();
     }
