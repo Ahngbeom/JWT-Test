@@ -23,9 +23,9 @@ public class KakaoService {
 
     private final RestTemplateBuilder restTemplateBuilder;
 
-    private final ObjectMapper objectMapper;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String getKakaoAccessTokenByCode(String code) {
+    public Kakao getKakaoAccessTokenByCode(String code) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -44,7 +44,7 @@ public class KakaoService {
         ResponseEntity<String> response = restTemplateBuilder.build().postForEntity(url, request, String.class);
 
         try {
-            return objectMapper.readValue(response.getBody(), Kakao.class).getAccess_token();
+            return objectMapper.readValue(response.getBody(), Kakao.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

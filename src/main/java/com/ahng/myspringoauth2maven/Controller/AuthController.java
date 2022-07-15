@@ -1,6 +1,7 @@
 package com.ahng.myspringoauth2maven.Controller;
 
 import com.ahng.myspringoauth2maven.DTO.User;
+import com.ahng.myspringoauth2maven.Service.CustomOAuth2UserService;
 import com.ahng.myspringoauth2maven.Service.KakaoService;
 import com.ahng.myspringoauth2maven.Service.OAuth2Service;
 import com.nimbusds.jose.crypto.impl.HMAC;
@@ -15,6 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.DateUtils;
 
@@ -29,10 +31,21 @@ public class AuthController {
 
     private static final Logger log = LogManager.getLogger();
 
+    private final CustomOAuth2UserService customOAuth2UserService;
+
     private final OAuth2Service service;
     private final KakaoService kakaoService;
 
     private final Environment env;
+
+//    @GetMapping("/oauth2/code/{provider}")
+//    public ResponseEntity<?> oauthLogin(@PathVariable String provider, @RequestParam String code, HttpServletResponse response) {
+//        OAuth2User user;
+//        if (provider.equals("kakao"))
+//            user = customOAuth2UserService.loadUser();
+//        else
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 
     @GetMapping("/oauth2/code/{provider}")
     public ResponseEntity<?> oauthLogin(@PathVariable String provider, @RequestParam String code, HttpServletResponse response) {

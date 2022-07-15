@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.Message;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,10 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +34,12 @@ public class UserController {
 //    }
 
     @GetMapping("/user")
-    public User user(@AuthenticationPrincipal OAuth2User principal) {
+    public User user(@AuthenticationPrincipal OAuth2User principal, HttpServletRequest request) {
+//        Enumeration<String> enumeration =  request.getHeaderNames();
+//        while (enumeration.hasMoreElements()) {
+//            log.warn(enumeration.nextElement());
+//        }
+
         if (principal == null)
             return null;
         principal.getAttributes().forEach((s, o) -> log.warn(s + ": " + o));

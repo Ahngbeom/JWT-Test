@@ -1,5 +1,6 @@
 package com.ahng.myspringoauth2maven.DTO;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ public class User {
     private String email;
     private String picture;
 
+    @Builder
     public User(String nickname, String email, String picture) {
         this.nickname = nickname;
         this.email = email;
