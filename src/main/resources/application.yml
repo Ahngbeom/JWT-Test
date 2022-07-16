@@ -4,5 +4,6 @@ server:
 spring:
   profiles:
     include:
+      - jwt
       - h2
       - oauth

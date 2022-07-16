@@ -1,0 +1,6 @@
+jwt:
+  header: Authorization
+  # `echo 'ahngbeom-spring-boot-maven-jwt-tutorial-jwtSecretKey-base64-jwtSecretKey-base64-jwtSecretKey-base64' | base64`; echo "시크릿 키 문자열은 64Byte 이상이어야한다."
+  secret: YWhuZ2Jlb20tc3ByaW5nLWJvb3QtbWF2ZW4tand0LXR1dG9yaWFsLWp3dFNlY3JldEtleS1iYXNlNjQtand0U2VjcmV0S2V5LWJhc2U2NC1qd3RTZWNyZXRLZXktYmFzZTY0Cg==
+  token-validity-in-seconds: 86400 # Token 만료 시간 86400초
+
