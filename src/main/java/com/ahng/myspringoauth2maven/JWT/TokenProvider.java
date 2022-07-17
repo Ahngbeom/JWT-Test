@@ -1,5 +1,6 @@
 package com.ahng.myspringoauth2maven.JWT;
 
+import com.ahng.myspringoauth2maven.Enumeration.TokenType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -28,14 +29,19 @@ public class TokenProvider implements InitializingBean {
     private static final String AUTHORITIES_KEY = "auth";
 
     private final String secret;
-    private final long tokenValidityInMilliseconds;
+    private final long accessTokenValidityInMilliseconds;
+    private final long refreshTokenValidityInMilliseconds;
 
     private Key key;
 
     // 의존성 주입
-    public TokenProvider(@Value("${jwt.secret}") String secret, @Value("${jwt.token-validity-in-seconds}") long tokenValidityInMilliseconds) {
+    public TokenProvider(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.accessToken-validity-in-seconds}") long accessTokenValidityInMilliseconds,
+            @Value("${jwt.refreshToken-validity-in-seconds}") long refreshTokenValidityInMilliseconds) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInMilliseconds * 1000;
+        this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds * 1000;
+        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds * 1000;
     }
 
     @Override
@@ -45,13 +51,15 @@ public class TokenProvider implements InitializingBean {
     }
 
     // Authentication 객체의 권한 정보를 이용해서 Token을 생성하는 메소드
-    public String createToken(Authentication authentication) {
+    public String createAccessToken(Authentication authentication, TokenType tokenType) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds); // 만료 기한 설정
+        Date validity = new Date(now + (tokenType == TokenType.ACCESS_TOKEN ? this.accessTokenValidityInMilliseconds : this.refreshTokenValidityInMilliseconds)); // 만료 기한 설정
+
+        logger.info(tokenType.toString() + ": " + validity);
 
         // JWT 생성 및 반환
         return Jwts.builder()
@@ -61,6 +69,23 @@ public class TokenProvider implements InitializingBean {
                 .setExpiration(validity)
                 .compact();
     }
+
+//    public String createRefreshToken(Authentication authentication) {
+//        String authorities = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(","));
+//
+//        long now = (new Date()).getTime();
+//        Date validity = new Date(now + this.tokenValidityInMilliseconds); // 만료 기한 설정
+//
+//        // JWT 생성 및 반환
+//        return Jwts.builder()
+//                .setSubject(authentication.getName())
+//                .claim(AUTHORITIES_KEY, authorities)
+//                .signWith(key, SignatureAlgorithm.HS512)
+//                .setExpiration(validity)
+//                .compact();
+//    }
 
     // Token에 담겨있는 정보를 이용해 Authentication 객체를 리턴하는 메소드
     public Authentication getAuthentication(String token) {

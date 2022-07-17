@@ -1,9 +1,6 @@
 package com.ahng.myspringoauth2maven.Config;
 
-import com.ahng.myspringoauth2maven.JWT.JWTAccessDeniedHandler;
-import com.ahng.myspringoauth2maven.JWT.JWTAuthenticationEntryPoint;
-import com.ahng.myspringoauth2maven.JWT.JWTSecurityConfig;
-import com.ahng.myspringoauth2maven.JWT.TokenProvider;
+import com.ahng.myspringoauth2maven.JWT.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true) // @PreAuthorize 어노테이션을 메소드 단위로 추가하기 위해서 적용
@@ -66,9 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // 로그인, 회원가입 API는 토큰이 없는 상태에서 요청이 들어오기 때문에 인증 없이 접근 허용
                 .antMatchers("/api/hello", "/api/authenticate", "/api/signup").permitAll()
+                .antMatchers("/token/refresh").permitAll()
                 .anyRequest().authenticated() // 나머지 요청들에 대해서는 인증이 필요
                 .and()
-                
+
                 // JWTFilter를 addFilterBefore로 등록했던 JWTSecurityConfig 클래스 적용
                 .apply(new JWTSecurityConfig(tokenProvider));
     }

@@ -2,6 +2,7 @@ package com.ahng.myspringoauth2maven.Controller;
 
 import com.ahng.myspringoauth2maven.DTO.LoginDTO;
 import com.ahng.myspringoauth2maven.DTO.TokenDTO;
+import com.ahng.myspringoauth2maven.Enumeration.TokenType;
 import com.ahng.myspringoauth2maven.JWT.JWTFilter;
 import com.ahng.myspringoauth2maven.JWT.TokenProvider;
 import org.springframework.http.HttpHeaders;
@@ -45,14 +46,15 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Authentication(인증 정보)를 기준으로 JWT 생성
-        String jwt = tokenProvider.createToken(authentication);
+        String accessToken = tokenProvider.createAccessToken(authentication, TokenType.ACCESS_TOKEN);
+        String refreshToken = tokenProvider.createAccessToken(authentication, TokenType.REFRESH_TOKEN);
 
         // 얻어낸 토큰(JWT)을 ResponseHeader에 저장
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + accessToken);
 
         // TokenDTO 객체에 토큰을 저장하고, ResponseBody에 TokenDTO 객체를 담아준 후 반환 
-        return new ResponseEntity<>(new TokenDTO(jwt), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(new TokenDTO(accessToken, refreshToken), httpHeaders, HttpStatus.OK);
     }
 
 }
