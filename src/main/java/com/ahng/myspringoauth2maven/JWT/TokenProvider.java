@@ -1,5 +1,6 @@
 package com.ahng.myspringoauth2maven.JWT;
 
+import com.ahng.myspringoauth2maven.DTO.TokenDTO;
 import com.ahng.myspringoauth2maven.Enumeration.TokenType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
@@ -45,47 +47,79 @@ public class TokenProvider implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         byte[] keyBytes = Decoders.BASE64.decode(secret); // secret 값을 Base64 Decoding 후, key 변수에 할당
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Authentication 객체의 권한 정보를 이용해서 Token을 생성하는 메소드
-    public String createAccessToken(Authentication authentication, TokenType tokenType) {
+    public TokenDTO createToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+        // 만료 기한 설정
         long now = (new Date()).getTime();
-        Date validity = new Date(now + (tokenType == TokenType.ACCESS_TOKEN ? this.accessTokenValidityInMilliseconds : this.refreshTokenValidityInMilliseconds)); // 만료 기한 설정
+        Date accessTokenValidity = new Date(now + this.accessTokenValidityInMilliseconds);
+        Date refreshTokenValidity = new Date(now + this.refreshTokenValidityInMilliseconds);
 
-        logger.info(tokenType.toString() + ": " + validity);
+        logger.info("Access Token Validity: " + accessTokenValidity);
+
+        // JWT 생성 및 반환
+        return new TokenDTO(
+                Jwts.builder()
+                        .setSubject(authentication.getName())
+                        .claim(AUTHORITIES_KEY, authorities)
+                        .signWith(key, SignatureAlgorithm.HS512)
+                        .setExpiration(accessTokenValidity)
+                        .compact(),
+                Jwts.builder()
+                        .setSubject(authentication.getName())
+                        .claim(AUTHORITIES_KEY, authorities)
+                        .signWith(key, SignatureAlgorithm.HS512)
+                        .setExpiration(refreshTokenValidity)
+                        .compact());
+    }
+
+    // Authentication 객체의 권한 정보를 이용해서 Token을 생성하는 메소드
+    public String createAccessToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        // 만료 기한 설정
+        long now = (new Date()).getTime();
+        Date accessTokenValidity = new Date(now + this.accessTokenValidityInMilliseconds);
+
+        logger.info("Access Token Validity: " + accessTokenValidity);
 
         // JWT 생성 및 반환
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
+                .setExpiration(accessTokenValidity)
                 .compact();
     }
 
-//    public String createRefreshToken(Authentication authentication) {
-//        String authorities = authentication.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.joining(","));
-//
-//        long now = (new Date()).getTime();
-//        Date validity = new Date(now + this.tokenValidityInMilliseconds); // 만료 기한 설정
-//
-//        // JWT 생성 및 반환
-//        return Jwts.builder()
-//                .setSubject(authentication.getName())
-//                .claim(AUTHORITIES_KEY, authorities)
-//                .signWith(key, SignatureAlgorithm.HS512)
-//                .setExpiration(validity)
-//                .compact();
-//    }
+    public String createRefreshToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        // 만료 기한 설정
+        long now = (new Date()).getTime();
+        Date refreshTokenValidity = new Date(now + this.refreshTokenValidityInMilliseconds);
+
+        logger.info("Refresh Token Validity: " + refreshTokenValidity);
+
+        // JWT 생성 및 반환
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(refreshTokenValidity)
+                .compact();
+    }
 
     // Token에 담겨있는 정보를 이용해 Authentication 객체를 리턴하는 메소드
     public Authentication getAuthentication(String token) {

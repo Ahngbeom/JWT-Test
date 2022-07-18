@@ -9,9 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import javax.annotation.PostConstruct;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -32,16 +31,17 @@ public class UserService {
             throw new RuntimeException("이미 가입되어 있는 유저입니다.");
 
         // 권한 정보 생성
-        Authority authority = Authority.builder()
-                .authorityName("ROLE_USER")
-                .build();
+//        Authority authority = Authority.builder()
+//                .authorityName("ROLE_USER")
+//                .build();
 
         // UserDTO 객체를 기준으로 UserEntity 객체 생성
         User user = User.builder()
                 .username(userDTO.getUsername())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .nickname(userDTO.getNickname())
-                .authorities(Collections.singleton(authority))
+//                .authorities(Collections.singleton(authority))
+                .authorities(userDTO.getAuthorities())
                 .activated(true)
                 .build();
 
@@ -60,4 +60,5 @@ public class UserService {
     public Optional<User> getMyUserWithAuthorities() {
         return SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
     }
+
 }
