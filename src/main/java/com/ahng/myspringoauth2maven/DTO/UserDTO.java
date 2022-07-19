@@ -29,6 +29,7 @@ public class UserDTO {
     @Size(min = 3, max = 50)
     private String nickname;
 
+    @NotNull
     private Set<Authority> authorities;
 
 }
