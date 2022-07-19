@@ -28,14 +28,14 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /*
-        Spring Bean LifeCycle CallBack - @PostConstruct
-        빈 생명주기 콜백: 스프링 빈이 생성된 후 의존관계 주입이 완료되거나 죽기 직전에 스프링 빈 안에 존재하는 메소드를 호출해주는 기능
-        초기화 콜백 함수 setAdmin 함수를 추가하여 H2 데이터베이스에 Admin 계정을 등록한다.
-     */
     @Transactional
     @PostConstruct
     public void setAdmin() throws RuntimeException {
+        /*
+            Spring Bean LifeCycle CallBack - @PostConstruct
+            빈 생명주기 콜백: 스프링 빈이 생성된 후 의존관계 주입이 완료되거나 죽기 직전에 스프링 빈 안에 존재하는 메소드를 호출해주는 기능
+            초기화 콜백 함수 setAdmin 함수를 추가하여 H2 데이터베이스에 Admin 계정을 등록한다.
+         */
         try {
             Authority authority = Authority.builder()
                     .authorityName("ROLE_ADMIN")
@@ -73,9 +73,10 @@ public class UserService {
         log.info("SUCCESS SAVE ON USERS TABLE");
     }
 
-    // 회원 가입 로직
     @Transactional
     public User signUp(UserDTO userDTO) {
+        // 회원 가입 로직
+
         // 데이터베이스 안에 인자로 넘어온 UserDTO 객체에 해당하는 유저가 기존에 등록되어있는지 검증
         if (userRepository.findOneWithAuthoritiesByUsername(userDTO.getUsername()).orElse(null) != null)
             throw new RuntimeException("이미 가입되어 있는 유저입니다.");
@@ -99,16 +100,22 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // 특정 유저에 대한 유저 정보 및 권한 정보를 조회 (관리자 전용?)
+
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthorities(String username) {
+        // 특정 유저에 대한 유저 정보 및 권한 정보를 조회 (관리자 전용)
         return userRepository.findOneWithAuthoritiesByUsername(username);
     }
 
-    // 자신의 유저 정보와 권한 정보를 조회 (로그인되어있을 경우에만 수행 가능?)
     @Transactional(readOnly = true)
     public Optional<User> getMyUserWithAuthorities() {
+        // 자신의 유저 정보와 권한 정보를 조회
         return SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<List<User>> getUserListWithAuthorities() {
+        return Optional.of(userRepository.findAll());
     }
 
 }

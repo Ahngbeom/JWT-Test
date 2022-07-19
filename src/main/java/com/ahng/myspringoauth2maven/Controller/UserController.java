@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,13 +43,19 @@ public class UserController {
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')") // 접근 허용된 권한 리스트 (로그인되어져있는 모든 유저가 접근 가능)
     public ResponseEntity<User> getMyUserInfo() {
-        return ResponseEntity.ok(userService.getMyUserWithAuthorities().get());
+        return ResponseEntity.ok(userService.getMyUserWithAuthorities().orElse(null));
     }
 
     @GetMapping("/user/{username}")
     @PreAuthorize("hasAnyRole('ADMIN')") // 접근 허용된 권한 리스트 (관리자만 접근 가능)
     public ResponseEntity<User> getUserInfo(@PathVariable String username) {
-        return ResponseEntity.ok(userService.getUserWithAuthorities(username).get());
+        return ResponseEntity.ok(userService.getUserWithAuthorities(username).orElse(null));
+    }
+
+    @GetMapping("/user/list")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<List<User>> getUserList() {
+        return new ResponseEntity<>(userService.getUserListWithAuthorities().orElse(null), HttpStatus.OK);
     }
 
     @GetMapping("/logout")
@@ -56,7 +63,6 @@ public class UserController {
         try {
             response.setHeader(JWTFilter.AUTHORIZATION_HEADER, null);
 
-            Cookie[] cookies = request.getCookies();
             Cookie refreshTokenCookie = new Cookie("refresh_token", null);
             refreshTokenCookie.setMaxAge(0);
             response.addCookie(refreshTokenCookie);

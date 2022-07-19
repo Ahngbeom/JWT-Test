@@ -4,25 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 
 public class JWTFilter extends GenericFilterBean {
 
     private static final Logger logger = LoggerFactory.getLogger(JWTFilter.class);
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
-//    public static final String ACCESS_TOKEN_HEADER = "Access-Token";
-//    public static final String REFRESH_TOKEN_HEADER = "Refresh-Token";
 
     private final TokenProvider tokenProvider;
 
@@ -30,9 +23,10 @@ public class JWTFilter extends GenericFilterBean {
         this.tokenProvider = tokenProvider;
     }
 
-    // JWT의 인증정보를 현재 실행 중인 SecurityContext에 저장하는 역할 수행
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+        // JWT의 인증정보를 현재 실행 중인 SecurityContext에 저장하는 역할 수행
+
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String requestURI = httpServletRequest.getRequestURI();
 

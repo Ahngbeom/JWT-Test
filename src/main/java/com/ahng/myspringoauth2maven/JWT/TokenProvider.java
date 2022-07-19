@@ -53,6 +53,8 @@ public class TokenProvider implements InitializingBean {
     }
 
     public TokenDTO createToken(Authentication authentication) {
+        // Authentication 객체의 권한 정보를 이용해서 Token을 생성하는 메소드
+
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -80,49 +82,9 @@ public class TokenProvider implements InitializingBean {
                         .compact());
     }
 
-    // Authentication 객체의 권한 정보를 이용해서 Token을 생성하는 메소드
-    public String createAccessToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        // 만료 기한 설정
-        long now = (new Date()).getTime();
-        Date accessTokenValidity = new Date(now + this.accessTokenValidityInMilliseconds);
-
-        logger.info("Access Token Validity: " + accessTokenValidity);
-
-        // JWT 생성 및 반환
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(accessTokenValidity)
-                .compact();
-    }
-
-    public String createRefreshToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        // 만료 기한 설정
-        long now = (new Date()).getTime();
-        Date refreshTokenValidity = new Date(now + this.refreshTokenValidityInMilliseconds);
-
-        logger.info("Refresh Token Validity: " + refreshTokenValidity);
-
-        // JWT 생성 및 반환
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(refreshTokenValidity)
-                .compact();
-    }
-
-    // Token에 담겨있는 정보를 이용해 Authentication 객체를 리턴하는 메소드
     public Authentication getAuthentication(String token) {
+        // Token에 담겨있는 정보를 이용해 Authentication 객체를 리턴하는 메소드
+
         // Token을 통해 Claims 객체 생성
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
