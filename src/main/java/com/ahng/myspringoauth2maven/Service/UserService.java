@@ -3,8 +3,10 @@ package com.ahng.myspringoauth2maven.Service;
 import com.ahng.myspringoauth2maven.DTO.UserDTO;
 import com.ahng.myspringoauth2maven.Entity.Authority;
 import com.ahng.myspringoauth2maven.Entity.User;
+import com.ahng.myspringoauth2maven.Repository.AuthorityRepository;
 import com.ahng.myspringoauth2maven.Repository.UserRepository;
 import com.ahng.myspringoauth2maven.Utils.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,15 +14,63 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import java.util.*;
 
+@Slf4j
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.authorityRepository = authorityRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    /*
+        Spring Bean LifeCycle CallBack - @PostConstruct
+        빈 생명주기 콜백: 스프링 빈이 생성된 후 의존관계 주입이 완료되거나 죽기 직전에 스프링 빈 안에 존재하는 메소드를 호출해주는 기능
+        초기화 콜백 함수 setAdmin 함수를 추가하여 H2 데이터베이스에 Admin 계정을 등록한다.
+     */
+    @Transactional
+    @PostConstruct
+    public void setAdmin() throws RuntimeException {
+        try {
+            Authority authority = Authority.builder()
+                    .authorityName("ROLE_ADMIN")
+                    .build();
+            if (authorityRepository.save(authority).getClass() != Authority.class)
+                throw new RuntimeException("ERROR SAVED ADMIN AUTHORITY ON AUTHORITY TABLE");
+
+            authority = Authority.builder()
+                    .authorityName("ROLE_USER")
+                    .build();
+            if (authorityRepository.save(authority).getClass() != Authority.class)
+                throw new RuntimeException("ERROR SAVED USER AUTHORITY SAVE ON AUTHORITY TABLE");
+
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        log.info("SUCCESS SAVE ON AUTHORITY TABLE");
+        try {
+            Set<Authority> adminAuthorities = new HashSet<>();
+            adminAuthorities.add(Authority.builder().authorityName("ROLE_ADMIN").build());
+            adminAuthorities.add(Authority.builder().authorityName("ROLE_USER").build());
+
+            User user = User.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("admin"))
+                    .nickname("ADMIN")
+                    .authorities(adminAuthorities)
+                    .activated(true)
+                    .build();
+            if (userRepository.save(user).getClass() != User.class)
+                throw new RuntimeException("ERROR SAVE ON USER TABLE");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        log.info("SUCCESS SAVE ON USERS TABLE");
     }
 
     // 회원 가입 로직
