@@ -1,0 +1,28 @@
+package com.ahng.myspringoauth2maven.Utils;
+
+public enum TokenStatus {
+
+    VALID_ACCESS_TOKEN,
+
+    VALID_REFRESH_TOKEN,
+
+    INVALID_ACCESS_TOKEN,
+
+    INVALID_REFRESH_TOKEN,
+
+    WRONG_SIGNATURE,
+
+    WRONG_ACCESS_TOKEN,
+
+    WRONG_REFRESH_TOKEN,
+
+    EXPIRED_ACCESS_TOKEN,
+
+    EXPIRED_REFRESH_TOKEN,
+
+    NOT_SUPPORTED_ACCESS_TOKEN,
+
+    NOT_SUPPORTED_REFRESH_TOKEN
+
+
+}

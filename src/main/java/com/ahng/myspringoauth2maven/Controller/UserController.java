@@ -5,10 +5,12 @@ import com.ahng.myspringoauth2maven.Entity.Authority;
 import com.ahng.myspringoauth2maven.Entity.User;
 import com.ahng.myspringoauth2maven.JWT.JWTFilter;
 import com.ahng.myspringoauth2maven.Service.UserService;
+import com.ahng.myspringoauth2maven.Utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -63,9 +65,18 @@ public class UserController {
         try {
             response.setHeader(JWTFilter.AUTHORIZATION_HEADER, null);
 
-            Cookie refreshTokenCookie = new Cookie("refresh_token", null);
-            refreshTokenCookie.setMaxAge(0);
-            response.addCookie(refreshTokenCookie);
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if (c.getName().equals("refresh_token")) {
+                        log.info("Remove Refresh Token for Logout - " + c.getValue());
+                        c.setMaxAge(0);
+                        c.setValue(null);
+                        SecurityContextHolder.clearContext();
+                        response.addCookie(c);
+                    }
+                }
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

@@ -63,8 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests() // HttpServletRequest를 사용하는 요청들에 대한 접근 제한 설정
 
                 // 로그인, 회원가입 API는 토큰이 없는 상태에서 요청이 들어오기 때문에 인증 없이 접근 허용
-                .antMatchers("/api/hello", "/api/authenticate", "/api/signup", "/api/token/refresh", "/api/logout").permitAll()
-                .antMatchers("/h2-console/**", "/favicon.ico").permitAll()
+                .antMatchers("/api/authenticate", "/api/signup", "/api/token/refresh", "/api/logout").permitAll()
+                .antMatchers("/", "/webjars/**", "/error/**", "/api/hello", "/h2-console/**", "/favicon.ico").permitAll()
                 .anyRequest().authenticated() // 나머지 요청들에 대해서는 인증이 필요
                 .and()
 

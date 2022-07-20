@@ -2,6 +2,7 @@ package com.ahng.myspringoauth2maven.JWT;
 
 import com.ahng.myspringoauth2maven.DTO.TokenDTO;
 import com.ahng.myspringoauth2maven.Enumeration.TokenType;
+import com.ahng.myspringoauth2maven.Utils.TokenStatus;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -106,20 +107,32 @@ public class TokenProvider implements InitializingBean {
     }
 
     // Token의 유효성 검사 메소드
-    public boolean validateToken(String token) {
+    public TokenStatus validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token); // 토큰 파싱 시도
-            return true;
+            return TokenStatus.VALID_ACCESS_TOKEN;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            logger.info("잘못된 JWT 서명입니다.");
+            logger.error("잘못된 JWT 서명입니다.");
+            return TokenStatus.WRONG_SIGNATURE;
         } catch (ExpiredJwtException e) {
-            logger.info("만료된 JWT 토큰입니다.");
+            logger.warn("만료된 JWT 토큰입니다.");
+            return TokenStatus.EXPIRED_ACCESS_TOKEN;
         } catch (UnsupportedJwtException e) {
-            logger.info("지원되지 않는 JWT 토큰입니다.");
+            logger.error("지원되지 않는 JWT 토큰입니다.");
+            return TokenStatus.NOT_SUPPORTED_ACCESS_TOKEN;
         } catch (IllegalArgumentException e) {
-            logger.info("JWT 토큰이 잘못되었습니다.");
+            logger.error("잘못된 JWT 토큰입니다.");
+            return TokenStatus.WRONG_ACCESS_TOKEN;
+        } catch (Exception e) {
+            logger.error("유효하지 않은 JWT 토큰입니다.");
+            return TokenStatus.INVALID_ACCESS_TOKEN;
         }
-        return false;
+    }
+
+    public Date getExpirationToken(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+
+        return claims.getExpiration();
     }
 
 }

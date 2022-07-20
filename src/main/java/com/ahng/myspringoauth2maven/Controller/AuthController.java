@@ -6,8 +6,12 @@ import com.ahng.myspringoauth2maven.Enumeration.TokenType;
 import com.ahng.myspringoauth2maven.JWT.JWTFilter;
 import com.ahng.myspringoauth2maven.JWT.TokenProvider;
 import com.ahng.myspringoauth2maven.Utils.SecurityUtil;
+import com.ahng.myspringoauth2maven.Utils.TokenStatus;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +30,11 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/api")
 public class AuthController {
 
+    private final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
@@ -79,6 +83,7 @@ public class AuthController {
 
             Cookie refreshTokenCookie = new Cookie("refresh_token", tokenDTO.getRefreshToken());
             refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setPath("/");
             response.addCookie(refreshTokenCookie);
             log.info("Refresh Token: " + tokenDTO.getRefreshToken());
 
@@ -102,20 +107,23 @@ public class AuthController {
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("refresh_token") && !cookie.getValue().isEmpty() && cookie.getValue() != null) {
-                    if (tokenProvider.validateToken(cookie.getValue())) {
+                if (cookie.getName().equals("refresh_token")) {
+                    if (tokenProvider.validateToken(cookie.getValue()).equals(TokenStatus.VALID_ACCESS_TOKEN)) {
                         authentication = tokenProvider.getAuthentication(cookie.getValue());
                         TokenDTO tokenDTO = tokenProvider.createToken(authentication);
                         cookie.setValue(tokenDTO.getRefreshToken());
                         cookie.setHttpOnly(true);
+                        cookie.setPath("/");
                         response.addCookie(cookie);
                         httpHeaders.set(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDTO.getAccessToken());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
 
                         log.info("=== Refresh Token ===");
                         log.info("Authentication: " + authentication.getPrincipal() + ", " + SecurityUtil.getCurrentUsername());
-                        log.info("Access token: " + httpHeaders.get(JWTFilter.AUTHORIZATION_HEADER));
-                        log.info("Refresh token: " + cookie.getValue());
+                        log.info("Access token: " + tokenDTO.getAccessToken());
+                        log.info("Access token validity: " + tokenProvider.getExpirationToken(tokenDTO.getAccessToken()).toString() + ")");
+                        log.info("Refresh token: " + tokenDTO.getRefreshToken());
+                        log.info("Refresh token validity: " + tokenProvider.getExpirationToken(tokenDTO.getRefreshToken()).toString() + ")");
 
                         return new ResponseEntity<>(tokenDTO, httpHeaders, HttpStatus.OK);
                     }
