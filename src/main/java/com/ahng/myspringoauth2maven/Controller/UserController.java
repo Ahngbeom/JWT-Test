@@ -72,7 +72,7 @@ public class UserController {
                         log.info("Remove Refresh Token for Logout - " + c.getValue());
                         c.setMaxAge(0);
                         c.setValue(null);
-                        SecurityContextHolder.clearContext();
+                        c.setPath("/"); // 쿠키를 생성했을 때 설정한 Path 값도 동일하게 지정해주어야 동일한 쿠키를 대체 또는 삭제할 수 있다.
                         response.addCookie(c);
                     }
                 }

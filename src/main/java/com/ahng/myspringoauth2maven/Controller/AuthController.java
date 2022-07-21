@@ -98,7 +98,7 @@ public class AuthController {
     }
 
     @GetMapping("/token/refresh")
-    public ResponseEntity<TokenDTO> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication;
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -126,16 +126,13 @@ public class AuthController {
                         log.info("Refresh token validity: " + tokenProvider.getExpirationToken(tokenDTO.getRefreshToken()).toString() + ")");
 
                         return new ResponseEntity<>(tokenDTO, httpHeaders, HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>("Expired Refresh Token", httpHeaders, HttpStatus.NOT_FOUND);
                     }
                 }
             }
         }
-//        if (accessTokenHeader != null && accessTokenHeader.startsWith("Bearer ")) {
-//            String token = accessTokenHeader.substring("Bearer ".length());
-//            log.info(JWTFilter.AUTHORIZATION_HEADER + ": " + token);
-//            return token;
-//        }
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Not found is Refresh Token", httpHeaders, HttpStatus.NOT_FOUND);
     }
 
 }
