@@ -2,7 +2,16 @@ server:
   port: 8080
 
 spring:
+#  devtools:
+#    livereload:
+#      enabled: true
   profiles:
     include:
+      - jwt
       - h2
       - oauth
+#  thymeleaf:
+#    prefix: classpath:templates/
+#    suffix: .html
+#    check-template-location: true
+#    cache: true
