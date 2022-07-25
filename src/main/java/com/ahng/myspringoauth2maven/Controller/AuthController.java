@@ -2,32 +2,26 @@ package com.ahng.myspringoauth2maven.Controller;
 
 import com.ahng.myspringoauth2maven.DTO.LoginDTO;
 import com.ahng.myspringoauth2maven.DTO.TokenDTO;
-import com.ahng.myspringoauth2maven.Enumeration.TokenType;
 import com.ahng.myspringoauth2maven.JWT.JWTFilter;
 import com.ahng.myspringoauth2maven.JWT.TokenProvider;
 import com.ahng.myspringoauth2maven.Utils.SecurityUtil;
 import com.ahng.myspringoauth2maven.Utils.TokenStatus;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -121,9 +115,9 @@ public class AuthController {
                         log.info("=== Refresh Token ===");
                         log.info("Authentication: " + authentication.getPrincipal() + ", " + SecurityUtil.getCurrentUsername());
                         log.info("Access token: " + tokenDTO.getAccessToken());
-                        log.info("Access token validity: " + tokenProvider.getExpirationToken(tokenDTO.getAccessToken()).toString() + ")");
+                        log.info("Access token validity: " + tokenProvider.getTokenExpiryTime(tokenDTO.getAccessToken()).toString() + ")");
                         log.info("Refresh token: " + tokenDTO.getRefreshToken());
-                        log.info("Refresh token validity: " + tokenProvider.getExpirationToken(tokenDTO.getRefreshToken()).toString() + ")");
+                        log.info("Refresh token validity: " + tokenProvider.getTokenExpiryTime(tokenDTO.getRefreshToken()).toString() + ")");
 
                         return new ResponseEntity<>(tokenDTO, httpHeaders, HttpStatus.OK);
                     } else {
@@ -135,4 +129,20 @@ public class AuthController {
         return new ResponseEntity<>("Not found is Refresh Token", httpHeaders, HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/token/expiry-time")
+    public ResponseEntity<Map<String, LocalDateTime>> getExpiryTime(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refresh_token")) {
+                    Map<String, LocalDateTime> tokenExpiryTimeMap = new HashMap<>();
+                    tokenExpiryTimeMap.put("Access Token", tokenProvider.getTokenExpiryTime(request.getHeader(JWTFilter.AUTHORIZATION_HEADER).substring("Bearer ".length())));
+                    tokenExpiryTimeMap.put("Refresh Token", tokenProvider.getTokenExpiryTime(cookie.getValue()));
+                    return ResponseEntity.ok(tokenExpiryTimeMap);
+                }
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
 }

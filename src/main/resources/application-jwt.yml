@@ -4,5 +4,5 @@ jwt:
   secret: YWhuZ2Jlb20tc3ByaW5nLWJvb3QtbWF2ZW4tand0LXR1dG9yaWFsLWp3dFNlY3JldEtleS1iYXNlNjQtand0U2VjcmV0S2V5LWJhc2U2NC1qd3RTZWNyZXRLZXktYmFzZTY0Cg==
   token-validity-in-seconds: 86400 # Token 만료 시간 86400밀리초 (24시간 / 1000)
   accessToken-validity-in-seconds: 10 # AccessToken 만료 시간 10초
-  refreshToken-validity-in-seconds: 100 # RefreshToken 만료 시간 10분
+  refreshToken-validity-in-seconds: 600 # RefreshToken 만료 시간 10분
 

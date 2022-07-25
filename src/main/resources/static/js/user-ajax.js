@@ -30,6 +30,7 @@ const userList = function () {
                 xhr.abort();
             } else {
                 xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                console.log(accessToken);
             }
         },
         success: function (data, status, xhr) {
@@ -53,11 +54,11 @@ const userList = function () {
             JsonResult.html(ulTag);
         },
         error: function (data, status, xhr) {
-            logout();
+            // logout();
             localStorage.setItem(LOGGED_IN, "false");
         },
         complete: function (data, status, xhr) {
-            console.error("Get User List: ", status);
+            console.log("Get User List: ", status);
             console.log(JSON.parse(data.responseText));
         }
 

@@ -10,30 +10,20 @@ $.ajaxSetup({
     }
 });
 
+// $(document).ajaxComplete( function () {
+//     if (localStorage.getItem(LOGGED_IN) === "true")
+//         resetInterval();
+//     else
+//         clearInterval(intervalId);
+// });
+
 window.onload = function (e) {
     if (localStorage.getItem(LOGGED_IN) === "true") {
         requestTokenRefresh();
+        // resetInterval();
     } else {
         $(".authenticated").hide();
+        // clearInterval(intervalId);
     }
 }
-
-
-let baseTime = 600;
-let min;
-let sec;
-const refreshTokenExpiryTime = setInterval(function () {
-    min = parseInt(baseTime / 60);
-    sec = baseTime % 60;
-
-    $("#expiryTime").html(min + ":" + sec);
-    baseTime--;
-
-    if (baseTime < 0) {
-        clearInterval(refreshTokenExpiryTime);
-        $("#expiryTime").html("Expired");
-    }
-}, 1000);
-
-
 

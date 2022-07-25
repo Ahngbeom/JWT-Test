@@ -1,7 +1,6 @@
 package com.ahng.myspringoauth2maven.JWT;
 
 import com.ahng.myspringoauth2maven.DTO.TokenDTO;
-import com.ahng.myspringoauth2maven.Enumeration.TokenType;
 import com.ahng.myspringoauth2maven.Utils.TokenStatus;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -14,11 +13,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -129,10 +129,10 @@ public class TokenProvider implements InitializingBean {
         }
     }
 
-    public Date getExpirationToken(String token) {
+    public LocalDateTime getTokenExpiryTime(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
-        return claims.getExpiration();
+        return claims.getExpiration().toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
     }
 
 }

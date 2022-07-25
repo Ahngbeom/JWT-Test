@@ -34,3 +34,7 @@ build/
 
 ### OAuth ###
 src/main/resources/application-oauth.yml
+
+### JWT ###
+
+src/main/resources/application-jwt.yml

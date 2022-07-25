@@ -42,9 +42,9 @@ public class JWTFilter extends GenericFilterBean {
             SecurityContextHolder.getContext().setAuthentication(authentication); // 얻어낸 Authentication 객체를 SecurityContext에 저장
             logger.info("Security Context에 '{}' 인증 정보를 저장했습니다. uri: {}", authentication.getName(), requestURI);
             logger.info("Access token: " + accessToken);
-            logger.info("Access token validity: " + tokenProvider.getExpirationToken(accessToken) + ")");
+            logger.info("Access token validity: " + tokenProvider.getTokenExpiryTime(accessToken) + ")");
             logger.info("Refresh token: " + refreshToken);
-            logger.info("Refresh token validity: " + tokenProvider.getExpirationToken(refreshToken) + ")");
+            logger.info("Refresh token validity: " + tokenProvider.getTokenExpiryTime(refreshToken) + ")");
         } else {
             if (requestURI.startsWith("/api/"))
                 logger.error("유효한 JWT 토큰이 없습니다. uri: {}", requestURI);

@@ -18,10 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,9 +33,13 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@Valid @RequestBody UserDTO userDTO) {
-        userDTO.getAuthorities().forEach(authority -> log.info(authority.getAuthorityName()));
-        return ResponseEntity.ok(userService.signUp(userDTO));
+    public ResponseEntity<?> signUp(@Valid @RequestBody UserDTO userDTO) {
+        try {
+            return ResponseEntity.ok(userService.signUp(userDTO));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(e.getMessage());
+        }
+
     }
 
     // 유저 정보 조회 API
@@ -81,5 +82,12 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+    }
+
+    @GetMapping("/user/username-availability")
+    public ResponseEntity<Boolean> usernameAvailability(String username) {
+        if (username.toUpperCase().contains("ADMIN") || username.toUpperCase().contains("ADMINISTRATOR"))
+            return ResponseEntity.ok(false);
+        return ResponseEntity.ok(!userService.getUserWithAuthorities(username).isPresent());
     }
 }
