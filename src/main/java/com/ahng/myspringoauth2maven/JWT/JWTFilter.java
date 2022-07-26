@@ -29,6 +29,8 @@ public class JWTFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         // JWT의 인증정보를 현재 실행 중인 SecurityContext에 저장하는 역할 수행
 
+        logger.info((((HttpServletRequest) servletRequest)).getHeader("Auth"));
+
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String requestURI = httpServletRequest.getRequestURI();
 

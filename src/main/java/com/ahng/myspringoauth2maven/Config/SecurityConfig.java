@@ -64,8 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 // Session을 사용하지 않음으로 설정
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
 
                 .authorizeRequests() // HttpServletRequest를 사용하는 요청들에 대한 접근 제한 설정
 
@@ -79,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // OAuth2 Login Request URL
                 .antMatchers(
                         "/oauth2/**",
-                        "/login/oauth2/code/github"
+                        "/login/oauth2/github"
                 ).permitAll()
 
                 // Other Unauthenticate URL
@@ -92,8 +92,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // JWTFilter를 addFilterBefore로 등록했던 JWTSecurityConfig 클래스 적용
                 .apply(new JWTSecurityConfig(tokenProvider))
-
                 .and()
-                .oauth2Login();
+
+                .oauth2Login().successHandler(oAuth2SuccessHandler).userInfoEndpoint().userService(oAuth2UserService);
     }
 }

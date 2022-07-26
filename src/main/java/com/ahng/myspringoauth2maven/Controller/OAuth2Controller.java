@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -20,11 +21,11 @@ public class OAuth2Controller {
         this.service = service;
     }
 
-    @GetMapping("/login/oauth2/code/{provider}")
-    public ResponseEntity<?> oauthLogin(HttpServletResponse response, @PathVariable String provider, @Valid @RequestBody String code) {
-        log.info(provider);
-        log.info(code);
-
-        return ResponseEntity.ok(code);
-    }
+//    @GetMapping("/login/oauth2/code/{provider}")
+//    public ResponseEntity<?> oAuth2RequestUser(HttpServletResponse response, @PathVariable String provider, @Valid @RequestBody String code) {
+//        log.info(provider);
+//        log.info(code);
+//
+//        return ResponseEntity.ok(code);
+//    }
 }
