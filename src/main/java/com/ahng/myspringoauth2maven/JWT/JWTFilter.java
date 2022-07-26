@@ -35,9 +35,9 @@ public class JWTFilter extends GenericFilterBean {
         String accessToken = resolveAccessToken(httpServletRequest); // HttpServletRequest에서 토큰을 얻어낸다.
         String refreshToken = resolveRefreshToken(httpServletRequest); // HttpServletRequest에서 토큰을 얻어낸다.
 
-        if (requestURI.equals("/api/authenticate") && SecurityContextHolder.getContext().getAuthentication() != null) {
-            logger.error("이미 로그인 상태입니다. 로그아웃 후 진행해주세요");
-        } else if (StringUtils.hasText(accessToken) && tokenProvider.validateToken(accessToken).equals(TokenStatus.VALID_ACCESS_TOKEN)) { // 얻어온 토큰 유효성 검사
+//        if (requestURI.equals("/api/authenticate") && SecurityContextHolder.getContext().getAuthentication() != null)
+//            logger.error("이미 로그인 상태입니다. 로그아웃 후 진행해주세요");
+        if (StringUtils.hasText(accessToken) && tokenProvider.validateToken(accessToken).equals(TokenStatus.VALID_ACCESS_TOKEN)) { // 얻어온 토큰 유효성 검사
             Authentication authentication = tokenProvider.getAuthentication(accessToken); // 유효한 토큰이라면 토큰에 담겨져있는 Authentication(인증 정보)를 얻어낸다.
             SecurityContextHolder.getContext().setAuthentication(authentication); // 얻어낸 Authentication 객체를 SecurityContext에 저장
             logger.info("Security Context에 '{}' 인증 정보를 저장했습니다. uri: {}", authentication.getName(), requestURI);

@@ -46,6 +46,7 @@ public class AuthController {
     @PostMapping("/authenticate")
     public ResponseEntity<?> authorize(HttpServletRequest request, HttpServletResponse response, @Valid @RequestBody LoginDTO loginDTO) throws RuntimeException {
         try {
+            log.info("Request Login");
             String authorizationHeader = request.getHeader(JWTFilter.AUTHORIZATION_HEADER);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && !authorizationHeader.substring("Bearer ".length()).equals("null")) {
                 throw new RuntimeException("Already Logged In");
@@ -61,8 +62,8 @@ public class AuthController {
 
             log.warn(String.valueOf(authentication.getPrincipal()));
 
-            // Authentication 객체 타입의 유저 정보 결과 값을 SecurityContext에 저장
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            // Authentication 객체 타입의 유저 정보 결과 값을 SecurityContext에 저장
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
 
             log.info("Held Security Contenxt: " + authentication.getPrincipal() + ", " + SecurityUtil.getCurrentUsername());
 

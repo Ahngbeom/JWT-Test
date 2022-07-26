@@ -110,6 +110,7 @@ public class TokenProvider implements InitializingBean {
     public TokenStatus validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token); // 토큰 파싱 시도
+            logger.info("유효한 JWT 토큰입니다.");
             return TokenStatus.VALID_ACCESS_TOKEN;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             logger.error("잘못된 JWT 서명입니다.");
