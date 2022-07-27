@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -62,11 +63,6 @@ public class AuthController {
 
             log.warn(String.valueOf(authentication.getPrincipal()));
 
-//            // Authentication 객체 타입의 유저 정보 결과 값을 SecurityContext에 저장
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            log.info("Held Security Contenxt: " + authentication.getPrincipal() + ", " + SecurityUtil.getCurrentUsername());
-
             // Authentication(인증 정보)를 기준으로 JWT 생성
             TokenDTO tokenDTO = tokenProvider.createToken(authentication);
 
@@ -84,10 +80,14 @@ public class AuthController {
 
             // TokenDTO 객체에 토큰을 저장하고, ResponseBody에 TokenDTO 객체를 담아준 후 반환
             return new ResponseEntity<>(tokenDTO, httpHeaders, HttpStatus.OK);
-        } catch (Exception e) {
-//            e.printStackTrace();
+        } catch (BadCredentialsException e) {
+            // username 또는 password가 유효하지 않음
             log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        } catch (RuntimeException e) {
+            // 이미 로그인되어 있음
+            log.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
     }

@@ -66,8 +66,8 @@ const userLogin = function () {
             // intervalId = setInterval(refreshTokenExpiryInterval, 1000);
         },
         error: function (data, status, xhr) {
-            console.log(status);
-            console.log(data);
+            alertToastTag.querySelector('.toast-body').innerHTML = data.responseText;
+            alertToast.show();
         },
         complete: function () {
             signupForm.reset();

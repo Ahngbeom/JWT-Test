@@ -1,5 +1,6 @@
 package com.ahng.myspringoauth2maven.JWT;
 
+import com.ahng.myspringoauth2maven.Utils.SecurityUtil;
 import com.ahng.myspringoauth2maven.Utils.TokenStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ public class JWTFilter extends GenericFilterBean {
         if (StringUtils.hasText(accessToken) && tokenProvider.validateToken(accessToken).equals(TokenStatus.VALID_ACCESS_TOKEN)) { // 얻어온 토큰 유효성 검사
             Authentication authentication = tokenProvider.getAuthentication(accessToken); // 유효한 토큰이라면 토큰에 담겨져있는 Authentication(인증 정보)를 얻어낸다.
             SecurityContextHolder.getContext().setAuthentication(authentication); // 얻어낸 Authentication 객체를 SecurityContext에 저장
+//            logger.info("Held Security Contenxt: " + authentication.getPrincipal() + ", " + SecurityUtil.getCurrentUsername());
             logger.info("Security Context에 '{}' 인증 정보를 저장했습니다. uri: {}", authentication.getName(), requestURI);
             logger.info("Access token: " + accessToken);
             logger.info("Access token validity: " + tokenProvider.getTokenExpiryTime(accessToken) + ")");
